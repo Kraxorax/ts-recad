@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-16"?>
+<RecadRoot>
+  <General>
+    <Version>20210501</Version>
+    <Author>ReluxDesktop</Author>
+  </General>
+  <Project>
+    <ProjectInfo>
+      <Date>26.01.2024</Date>
+    </ProjectInfo>
+    <ProductLibrary>
+      <LuminariesDef/>
+      <SensorsDef/>
+      <MaterialsDef>
+        <MaterialDef id="0" name="floor">
+          <Color>RGB(46;64;74)</Color>
+          <Rho>20</Rho>
+        </MaterialDef>
+        <MaterialDef id="1" name="ceiling">
+          <Color>RGB(220;209;187)</Color>
+          <Rho>70</Rho>
+        </MaterialDef>
+        <MaterialDef id="2" name="wall">
+          <Color>RGB(157;149;134)</Color>
+          <Rho>50</Rho>
+        </MaterialDef>
+      </MaterialsDef>
+    </ProductLibrary>
+    <Interior>
+      <Room name="Empty room">
+        <SceneInfo>
+          <NorthAngle>0.0</NorthAngle>
+        </SceneInfo>
+        <Position>0;0;0</Position>
+        <Rotation>0.0</Rotation>
+        <Height>2.8</Height>
+        <Walls>
+          <Wall>
+            <Start>-2;2</Start>
+            <End>2;2</End>
+            <WallElement>
+              <Width>1.2</Width>
+              <Height>1.6</Height>
+            </WallElement>
+            <MaterialRef ref_id="2"/>
+          </Wall>
+          <Wall>
+            <Start>2;2</Start>
+            <End>2;-2</End>
+            <MaterialRef ref_id="2"/>
+          </Wall>
+          <Wall>
+            <Start>2;-2</Start>
+            <End>-2;-2</End>
+            <MaterialRef ref_id="2"/>
+          </Wall>
+          <Wall>
+            <Start>-2;-2</Start>
+            <End>-2;2</End>
+            <MaterialRef ref_id="2"/>
+          </Wall>
+        </Walls>
+        <Ceiling>
+          <MaterialRef>{'ref_id': '1'}</MaterialRef>
+        </Ceiling>
+        <Floor>
+          <MaterialRef>{'ref_id': '0'}</MaterialRef>
+        </Floor>
+        <Sensors>
+          <Sensor id="28" ref_id="28">
+            <Position>-1.7899999618530273;-1.7763568394002505e-15;-0.39570000767707825</Position>
+            <Rotation>0;0;0;1</Rotation>
+          </Sensor>
+          <Sensor id="32" ref_id="32">
+            <Position>0.00980002898722887;0.5199999809265137;1.1957001686096191</Position>
+            <Rotation>1;0;0;-1.1102230246251565e-16</Rotation>
+          </Sensor>
+        </Sensors>
+        <Objects/>
+        <CalcSettings autoprocess="none"/>
+        <SceneResult/>
+      </Room>
+    </Interior>
+    <Location>
+      <City>Null island</City>
+      <Longitude>0.0</Longitude>
+      <Latitude>0.0</Latitude>
+    </Location>
+  </Project>
+</RecadRoot>

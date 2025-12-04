@@ -1,0 +1,1351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Mit XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) von  (Relux Informatik AG) bearbeitet -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:element name="RecadRoot">
+		<xs:annotation>
+			<xs:documentation>Root of ReCadII, In the first version all dimensions must be in meters</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="General">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Version" type="xs:string"/>
+							<xs:element name="Author" type="xs:string" minOccurs="0"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Project">
+					<xs:complexType>
+						<xs:all>
+							<xs:element name="ProjectInfo" type="ProjectInfoType" minOccurs="0"/>
+							<xs:element name="ProductLibrary" minOccurs="0">
+								<xs:complexType>
+									<xs:all>
+										<xs:element name="LuminariesDef" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="LuminaireDef" type="LuminaireDefType" minOccurs="0" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="SensorsDef" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="SensorDef" type="SensorDefType" minOccurs="0" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="MaterialsDef" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="MaterialDef" minOccurs="0" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:complexContent>
+																<xs:extension base="MaterialDef"/>
+															</xs:complexContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="MeshesDef" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="MeshDef" type="MeshDefType" minOccurs="0" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:all>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Interior" minOccurs="0">
+								<xs:complexType>
+									<xs:choice minOccurs="1" maxOccurs="unbounded">
+										<xs:element name="Building" minOccurs="0">
+											<xs:complexType>
+												<xs:choice>
+													<xs:element name="Storey" minOccurs="0" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="StoreyInfo" type="StoreyInfoType" minOccurs="0"/>
+																<xs:element name="Room" type="RoomType" maxOccurs="unbounded"/>
+															</xs:sequence>
+															<xs:attribute name="name" type="xs:string"/>
+															<xs:attribute name="uuid" use="optional">
+																<xs:annotation>
+																	<xs:documentation>Universally unique identifier of the storey</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:pattern value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+														</xs:complexType>
+													</xs:element>
+												</xs:choice>
+												<xs:attribute name="uuid" use="optional">
+													<xs:annotation>
+														<xs:documentation>Universally unique identifier of the building</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:pattern value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="Room" type="RoomType" minOccurs="0" maxOccurs="unbounded"/>
+									</xs:choice>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Exterior" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Scene" type="SceneType" maxOccurs="unbounded"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Location" type="LocationDef" minOccurs="0"/>
+						</xs:all>
+					</xs:complexType>
+					<xs:key name="material_key">
+						<xs:selector xpath="Project/ProductLibrary/MaterialsDef/MaterialDef"/>
+						<xs:field xpath="@id"/>
+					</xs:key>
+					<xs:keyref name="material_reference_1" refer="material_key">
+						<xs:selector xpath="Project/Exterior/Scene/Objects/Object/MaterialRef"/>
+						<xs:field xpath="@ref_id"/>
+					</xs:keyref>
+					<xs:keyref name="material_reference_2" refer="material_key">
+						<xs:selector xpath="Project/Interior/Building/Storey/Room/Objects/Object/MaterialRef"/>
+						<xs:field xpath="@ref_id"/>
+					</xs:keyref>
+					<xs:keyref name="material_reference_3" refer="material_key">
+						<xs:selector xpath="Project/Interior/Room/Objects/Object/MaterialRef"/>
+						<xs:field xpath="@ref_id"/>
+					</xs:keyref>
+					<xs:key name="sensor_id">
+						<xs:selector xpath="Project/ProductLibrary/SensorsDef/SensorDef"/>
+						<xs:field xpath="@id"/>
+					</xs:key>
+					<xs:keyref name="sensor_building_reference" refer="sensor_id">
+						<xs:selector xpath="Project/Interior/Building/Storey/Room/Sensors/Sensor"/>
+						<xs:field xpath="@ref_id"/>
+					</xs:keyref>
+					<xs:keyref name="sensor_room_reference" refer="sensor_id">
+						<xs:selector xpath="Project/Interior/Room/Sensors/Sensor"/>
+						<xs:field xpath="@ref_id"/>
+					</xs:keyref>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Shape">
+		<xs:annotation>
+			<xs:documentation>Polygon or centerline of face. A list of ; seperated float numbers. In the case of a polygon the order must be COUNTERCLOCKWISE!</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="nSize" type="xs:int">
+						<xs:annotation>
+							<xs:documentation>Number of vertices in the array</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="vSize" type="xs:int" default="3">
+						<xs:annotation>
+							<xs:documentation>Size of one vertex 2 or 3 </xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="is_line" type="xs:boolean" default="false">
+						<xs:annotation>
+							<xs:documentation>If true the array descripes the center line of a line object</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="RoomType">
+		<xs:all>
+			<xs:element name="SceneInfo" type="SceneInfoDef" minOccurs="0"/>
+			<xs:element name="Position" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Position of the room or scene in the storey or a bigger scene geometry</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Rotation" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Rotation of the room or scene in the storey or a bigger scene geometry</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Height" type="xs:double">
+				<xs:annotation>
+					<xs:documentation>Height of the room</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Walls" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Walls of interior room</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Wall" type="WallType" minOccurs="3" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Ceiling" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Ceiling element, only for the material, shape is defined by the walls</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="MaterialRef" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Referenz to the material in "MaterialsDef"</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CeilingElement" type="CeilingElementType" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Floor" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Foor element, only for the material, shape is defined by the walls</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="MaterialRef" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Referenz to the material in "MaterialsDef"</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FreeSurfaces" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="FreeSurface" type="FreeSurfaceType" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Luminaires" minOccurs="0">
+				<xs:complexType>
+					<xs:choice minOccurs="1" maxOccurs="unbounded">
+						<xs:element name="Luminaire" minOccurs="1" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="LuminaireType"/>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:choice>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Meshes" minOccurs="0">
+				<xs:complexType>
+					<xs:choice minOccurs="1" maxOccurs="unbounded">
+						<xs:element name="Mesh" type="MeshType" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:choice>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Sensors" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="Sensor" type="SensorType" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="MeasuringSurfaces" minOccurs="0">
+				<xs:complexType>
+					<xs:choice minOccurs="1" maxOccurs="unbounded">
+						<xs:element name="MeasuringSurface" type="MeasuringSurfaceType" maxOccurs="unbounded"/>
+					</xs:choice>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Objects" minOccurs="0">
+				<xs:complexType>
+					<xs:choice minOccurs="1" maxOccurs="unbounded">
+						<xs:element name="Object" type="ObjectType" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Extrusion object, based on a polygon</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="BooleanObject" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="BooleanObjectType"/>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:choice>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CalcSettings" type="CalcSettingsType" minOccurs="0"/>
+			<xs:element name="Utilisation" type="UtilisationType" minOccurs="0"/>
+			<xs:element name="SceneResult" type="SceneResultType" minOccurs="0"/>
+		</xs:all>
+		<xs:attribute name="name" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>Name of the room</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="id" type="xs:int" use="optional">
+			<xs:annotation>
+				<xs:documentation>Unique identifier of the room</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="uuid" use="optional">
+			<xs:annotation>
+				<xs:documentation>Universally unique identifier of the room</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:pattern value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="MeasuringSurfaceType">
+		<xs:all>
+			<xs:element name="Structure" type="StructureType"/>
+			<xs:element name="Results" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Result" minOccurs="1" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="ResultType">
+										<xs:sequence>
+											<xs:element name="Summary">
+												<xs:complexType>
+													<xs:sequence>
+														<xs:element name="Average"/>
+														<xs:element name="Min"/>
+														<xs:element name="Max"/>
+													</xs:sequence>
+												</xs:complexType>
+											</xs:element>
+											<xs:element name="ResultsPoints">
+												<xs:complexType>
+													<xs:sequence>
+														<xs:element name="ResultsPoint" maxOccurs="unbounded">
+															<xs:complexType>
+																<xs:sequence>
+																	<xs:element name="Position"/>
+																	<xs:element name="Value"/>
+																</xs:sequence>
+															</xs:complexType>
+														</xs:element>
+													</xs:sequence>
+												</xs:complexType>
+											</xs:element>
+										</xs:sequence>
+									</xs:extension>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Isolines" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Layers">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Layer" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element ref="Shape"/>
+											</xs:sequence>
+											<xs:attribute name="Label"/>
+											<xs:attribute name="Color" use="required"/>
+											<xs:attribute name="Value" use="required"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:all>
+		<xs:attribute name="name" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>Name of the measuring surface</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="type" type="xs:int">
+			<xs:annotation>
+				<xs:documentation>Type of the measuring surface</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="ref_to" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>Refers to wall or Ceiling, if so </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="SensorType">
+		<xs:all>
+			<xs:element name="Position" type="xs:string"/>
+			<xs:element name="Rotation" type="xs:string"/>
+		</xs:all>
+		<xs:attribute name="id" use="optional"/>
+		<xs:attribute name="ref_id" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="ShortInfoType">
+		<xs:all minOccurs="0">
+			<xs:element name="Manufacturer" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Manufacturer of the product</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ManufacturerId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Manufacturer Id of the product</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Family" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Family or series name</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FamilyId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Family or series id</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrderNumber" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Number to identify the product e.g. order number</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="type"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ProductName" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the product</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MountInfo" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Info about the mounting of the product. In first version just simple mounting types</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="pendant"/>
+						<xs:enumeration value="freestanding"/>
+						<xs:enumeration value="recessed"/>
+						<xs:enumeration value="surfacemounted"/>
+						<xs:enumeration value="other"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SystemPower" type="xs:float" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Total system power of the product [W]</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SystemFlux" type="xs:float" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Total system flux of the product [W]</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Equipment" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Info about the equipment of the luminaire</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LdtLength" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Length of  the product in millimeters => see Eulumdat definition</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LdtWidth" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Width of  the product in millimeters => see Eulumdat definition</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LdtHeight" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Height of  the product in millimeters => see Eulumdat definition</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LdtDiameter" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Diameter of  the product in millimeters => see Eulumdat definition</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="ShortInfoSensorType">
+		<xs:all minOccurs="0">
+			<xs:element name="Manufacturer" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Manufacturer of the product</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ManufacturerId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Manufacturer Id of the product</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Family" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Family or series name</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FamilyId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Family or series id</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrderNumber" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Number to identify the product e.g. order number</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="type"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ProductName" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the product</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MountInfo" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Info about the mounting of the product. In first version just simple mounting types</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="pendant"/>
+						<xs:enumeration value="freestanding"/>
+						<xs:enumeration value="recessed"/>
+						<xs:enumeration value="surfacemounted"/>
+						<xs:enumeration value="other"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="LuminaireType">
+		<xs:all>
+			<xs:element name="Position" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Position of the luminaire</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PhotoCenter" type="xs:string" minOccurs="0"/>
+			<xs:element name="Rotation" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Rotation of the luminaire, if "Target" is given and"use_target" = true, the rotation will be calcualted by the "Target"</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Target" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Target point</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+		<xs:attribute name="id" use="required"/>
+		<xs:attribute name="ref_id" use="required"/>
+		<xs:attribute name="use_target" type="xs:boolean" default="false">
+			<xs:annotation>
+				<xs:documentation>If true the given "Target" will used to calculate the rotation during the import into ReluxDesktop</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="GeometryRefType">
+		<xs:all>
+			<xs:element name="Position" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Position of the luminaire</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Rotation" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Rotation of the luminaire, if "Target" is given and"use_target" = true, the rotation will be calcualted by the "Target"</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Target" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Target point</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+		<xs:attribute name="id" use="required"/>
+		<xs:attribute name="ref_id" use="required"/>
+		<xs:attribute name="use_target" type="xs:boolean" default="false">
+			<xs:annotation>
+				<xs:documentation>If true the given "Target" will used to calculate the rotation during the import into ReluxDesktop</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ResultType">
+		<xs:attribute name="type">
+			<xs:annotation>
+				<xs:documentation>Type of the result</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="E"/>
+					<xs:enumeration value="Ec"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="calc_height" type="xs:float">
+			<xs:annotation>
+				<xs:documentation>In the case of horizontal surfaces the calcualtion height in current scene / room</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="WallType">
+		<xs:sequence>
+			<xs:choice maxOccurs="4">
+				<xs:element name="Start" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>Start point of the wall, all walls must define a closed polygon</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="End" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>Start point of the wall, all walls must defined a closed polygon</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="WallElement" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Elemt in the wall, window or door</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:complexContent>
+							<xs:extension base="WallElementType"/>
+						</xs:complexContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="MaterialRef" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Referenz to the material in "MaterialsDef"</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:attribute name="ref_id" use="required"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="MaterialRef">
+		<xs:complexType>
+			<xs:attribute name="ref_id"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="ObjectType">
+		<xs:choice minOccurs="1" maxOccurs="unbounded">
+			<xs:element name="Structure" type="StructureType"/>
+			<xs:element name="MaterialRef" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Referenz to the material in "MaterialsDef</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="id"/>
+		<xs:attribute name="name">
+			<xs:annotation>
+				<xs:documentation>Name of the object</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="type" type="xs:int"/>
+	</xs:complexType>
+	<xs:complexType name="SceneType">
+		<xs:choice minOccurs="1" maxOccurs="unbounded">
+			<xs:element name="SceneInfo" type="SceneInfoDef" minOccurs="0"/>
+			<xs:element name="Position" type="xs:string" minOccurs="0"/>
+			<xs:element name="Rotation" type="xs:string" minOccurs="0"/>
+			<xs:element name="Shape">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="ShapeType">
+							<xs:attribute name="vSize" type="xs:int">
+								<xs:annotation>
+									<xs:documentation>Size of one vertex</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="MaterialRef" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Material of the ground surface of the exterior scene. Referenz to the material in "MaterialsDef"</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Luminaries" minOccurs="0">
+				<xs:complexType>
+					<xs:choice minOccurs="1" maxOccurs="unbounded">
+						<xs:element name="Luminaire" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="LuminaireType"/>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:choice>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="MeasuringSurfaces" minOccurs="0">
+				<xs:complexType>
+					<xs:choice minOccurs="1" maxOccurs="unbounded">
+						<xs:element name="MeasuringSurface" type="MeasuringSurfaceType" maxOccurs="unbounded"/>
+					</xs:choice>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Objects" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Object" type="ObjectType" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GroundElement" type="GroundElementType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="CalcSettings" type="CalcSettingsType" minOccurs="0"/>
+			<xs:element name="SceneResult" type="SceneResultType" minOccurs="0"/>
+			<xs:element name="Meshes" minOccurs="0">
+				<xs:complexType>
+					<xs:choice minOccurs="1" maxOccurs="unbounded">
+						<xs:element name="Mesh" type="MeshType" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:choice>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="name">
+			<xs:annotation>
+				<xs:documentation>Name of the scene in the project</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="uuid" use="optional">
+			<xs:annotation>
+				<xs:documentation>Universally unique identifier of the scene</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:pattern value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="StructureType">
+		<xs:all>
+			<xs:element name="Shape">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="ShapeType">
+							<xs:attribute name="vSize" type="xs:int" default="3">
+								<xs:annotation>
+									<xs:documentation>Size of one vertex 2 or 3 </xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="line_style">
+								<xs:annotation>
+									<xs:documentation>Line style</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="left"/>
+										<xs:enumeration value="center"/>
+										<xs:enumeration value="right"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Position" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Realtive positon of the object in the room or scene</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Rotation" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Realtive rotation of the object / surface in the room or scene</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Height" type="xs:double" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Height of the obejct, will be ignord in the case of measuring surfaces</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Thickness" type="xs:double" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If is_line = true it sets the thickness of a line object</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="ShapeType" mixed="true">
+		<xs:attribute name="nSize" type="xs:int">
+			<xs:annotation>
+				<xs:documentation>Number of vertices in the array</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="is_line" type="xs:boolean" default="false">
+			<xs:annotation>
+				<xs:documentation>If true the array describes the center line of a line object</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="WallElementType">
+		<xs:sequence>
+			<xs:element name="WallPos">
+				<xs:annotation>
+					<xs:documentation>Relative 2D position in the wall. Qrigin = Lower left corner, view to the inner wall</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Width" type="xs:double">
+				<xs:annotation>
+					<xs:documentation>Width of the element</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Height" type="xs:double">
+				<xs:annotation>
+					<xs:documentation>Height of the element</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MaterialRef" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Referenz to the material in "MaterialsDef"</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="ref_id"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Rotation" type="xs:double" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Rotation around the z-Axis</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="type" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>"door", "window" or "opening"</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="align">
+			<xs:annotation>
+				<xs:documentation>Alignment of the wall element (works only for doors) "left" or "right"</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="GroundElementType">
+		<xs:sequence>
+			<xs:element name="ElemPos">
+				<xs:annotation>
+					<xs:documentation>Relative 2D position in the basesurface. Origin = Orign of the parent, top view </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Length">
+				<xs:annotation>
+					<xs:documentation>Length of the element</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Width">
+				<xs:annotation>
+					<xs:documentation>Width of the element</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MaterialRef" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Referenz to the material in "MaterialsDef"</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="ref_id"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Rotation" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Rotation around the z-Axis</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="type" default="general">
+			<xs:annotation>
+				<xs:documentation>Type of element </xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="sport"/>
+					<xs:enumeration value="general"/>
+					<xs:enumeration value="street"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="lanes" type="xs:int" default="2">
+			<xs:annotation>
+				<xs:documentation>If type = street number of lanes</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="CeilingElementType">
+		<xs:all>
+			<xs:element name="ElemPos">
+				<xs:annotation>
+					<xs:documentation>Relative 2D position in the basesurface. Origin = Orign of the parent, top view </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Length">
+				<xs:annotation>
+					<xs:documentation>Length of the element</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Width">
+				<xs:annotation>
+					<xs:documentation>Width of the element</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MaterialRef" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Referenz to the material in "MaterialsDef"</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="ref_id"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Rotation" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Rotation around the z-Axis</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+		<xs:attribute name="type" default="window">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="window"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="CalcSettingsType">
+		<xs:all>
+			<xs:element name="MaintenanceFactor" type="xs:float" minOccurs="0"/>
+			<xs:element name="DefHeightRefPlane" type="xs:float" minOccurs="0"/>
+			<xs:element name="DistanceToWall" type="xs:float" minOccurs="0"/>
+			<xs:element name="DistanceToObjects" type="xs:float" minOccurs="0"/>
+			<xs:element name="DefLumType" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:int">
+							<xs:attribute name="ref_id" use="required"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DefLumMountHeight" type="xs:float" minOccurs="0"/>
+			<xs:element name="ZonalIlluminance" type="xs:float" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Setpoint specification for the efficiency method. If it is not set, the value from the utilisation profile is used.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ZonalGroupAlign" default="along" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="along"/>
+						<xs:enumeration value="across"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ZonalGroupStyle" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="sym"/>
+						<xs:enumeration value="row_space0"/>
+						<xs:enumeration value="row_space1"/>
+						<xs:enumeration value="row_space2"/>
+						<xs:enumeration value="row_space_usr"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ZonalGroupDistX" type="xs:float" minOccurs="0"/>
+			<xs:element name="ZonalGroupDistY" type="xs:float" minOccurs="0"/>
+			<xs:element name="SensCalcDetectionHeight" type="xs:float" minOccurs="0"/>
+			<xs:element name="SensCalcDetectionRate" type="xs:float" minOccurs="0"/>
+			<xs:element name="SensCalcUseCenterline" type="xs:boolean" minOccurs="0"/>
+		</xs:all>
+		<xs:attribute name="autoprocess" default="none">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="none"/>
+					<xs:enumeration value="zonal"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="SceneResultType">
+		<xs:sequence>
+			<xs:element name="UgrTableValue" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="ugr_for" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="GeoInfoType">
+		<xs:sequence>
+			<xs:element name="GeoLength" minOccurs="0"/>
+			<xs:element name="GeoWidth" minOccurs="0"/>
+			<xs:element name="GeoHeight" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MeshDefType">
+		<xs:all minOccurs="0">
+			<xs:element name="File" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="content" default="eulumdat">
+								<xs:annotation>
+									<xs:documentation>Content of the file. In first version only r3d</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="eulumdat"/>
+										<xs:enumeration value="ies"/>
+										<xs:enumeration value="rolf"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+							<xs:attribute name="type" default="localpath">
+								<xs:annotation>
+									<xs:documentation>Type of how the file is stored. In first version only localpath. Later also "url" and "embetted" </xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="localpath"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ShortInfo" minOccurs="0">
+				<xs:complexType>
+					<xs:all>
+						<xs:element name="Manufacturer" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Manufacturer of the product</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ManufacturerId" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Manufacturer Id of the product</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Family" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Family or series name</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="FamilyId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Family or series id</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="OrderNumber" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Number to identify the product e.g. order number</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:simpleContent>
+									<xs:extension base="xs:string">
+										<xs:attribute name="type"/>
+									</xs:extension>
+								</xs:simpleContent>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="ProductName" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Name of the product</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Length" type="xs:float" minOccurs="0"/>
+						<xs:element name="Width" type="xs:float" minOccurs="0"/>
+						<xs:element name="Height" type="xs:float" minOccurs="0"/>
+					</xs:all>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ConstructionScale" type="xs:float" default="1.0" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Global scaling factor e.g. mm => m NOT USED ACTUALLY</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ConstructionStyle" type="xs:int" default="0" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>X/Y/Z Style => m NOT USED ACTUALLY</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+		<xs:attribute name="id" type="xs:int" use="required"/>
+		<xs:attribute name="name" type="xs:string" use="optional"/>
+		<xs:attribute name="doublesided" type="xs:boolean" default="false"/>
+		<xs:attribute name="design" type="xs:boolean" default="false"/>
+		<xs:attribute name="uuid" type="xs:string"/>
+		<xs:attribute name="clsid" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="SensorDefType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="File" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="id" type="xs:ID" use="optional"/>
+							<xs:attribute name="contentType" use="optional">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="sensor/eulumdat"/>
+										<xs:enumeration value="sensor/xml"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+							<xs:attribute name="type" use="optional">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="localpath"/>
+										<xs:enumeration value="url"/>
+										<xs:enumeration value="embedded"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ShortInfo" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="ShortInfoSensorType"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:int" use="required"/>
+		<xs:attribute name="name" type="xs:string" use="optional"/>
+		<xs:attribute name="uuid" type="xs:string"/>
+		<xs:attribute name="clsid" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="LuminaireDefType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="File" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="content" default="eulumdat">
+								<xs:annotation>
+									<xs:documentation>Content of the file. In first version only photometirc files "eulumdat" "ies" and Relux ROLFz</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="eulumdat"/>
+										<xs:enumeration value="ies"/>
+										<xs:enumeration value="rolf"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+							<xs:attribute name="type" default="localpath">
+								<xs:annotation>
+									<xs:documentation>Type of how the file is stored. In first version only localpath. Later also "url" and "embetted" </xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="localpath"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+							<xs:attribute name="photocenter_style">
+								<xs:annotation>
+									<xs:documentation>In case of simple photometric filles the style of the photometric center. If the file includes a interior room defalut is "top" if just exterior it will be "center" </xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ShortInfo" type="ShortInfoType" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:int" use="required"/>
+		<xs:attribute name="name" type="xs:string" use="optional"/>
+		<xs:attribute name="uuid" type="xs:string"/>
+		<xs:attribute name="clsid" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="UtilisationType">
+		<xs:all>
+			<xs:element name="SimpleClass" type="xs:string" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="ProjectInfoType">
+		<xs:sequence>
+			<xs:element name="Number" type="xs:string" minOccurs="0"/>
+			<xs:element name="Object" type="xs:string" minOccurs="0"/>
+			<xs:element name="Installation" type="xs:string" minOccurs="0"/>
+			<xs:element name="Description" type="xs:string" minOccurs="0"/>
+			<xs:element name="Processor" type="xs:string" minOccurs="0"/>
+			<xs:element name="Client" type="xs:string" minOccurs="0"/>
+			<xs:element name="Date" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MaterialDef">
+		<xs:choice>
+			<xs:sequence>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="Color" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>Format: RGB(r;g;b) Colorvalues as byte (0-255) e.g. red = "RGB(255;0;0)"</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Rho">
+						<xs:annotation>
+							<xs:documentation>Reflexiondegree in %, 0-100</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:int">
+								<xs:minInclusive value="1"/>
+								<xs:maxInclusive value="100"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="Trans" type="xs:int">
+						<xs:annotation>
+							<xs:documentation>Transmission in %, 0-100</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:choice>
+			</xs:sequence>
+			<xs:element name="File">
+				<xs:annotation>
+					<xs:documentation>Texture file (JPG) as localpath localpath will befound in .\ or .\texture</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="type" default="localpath">
+								<xs:annotation>
+									<xs:documentation>Type of how the texture file is stored. In first version only localpath. Later also "url" and "embetted" </xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string"/>
+								</xs:simpleType>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="id" type="xs:int" use="required"/>
+		<xs:attribute name="name" type="xs:string" use="optional"/>
+		<xs:attribute name="default_for"/>
+	</xs:complexType>
+	<xs:complexType name="BooleanObjectType">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="Object" type="ObjectType" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="BooleanObject" type="BooleanObjectType" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="name">
+			<xs:annotation>
+				<xs:documentation>Name of the object</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="operator">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="diff"/>
+					<xs:enumeration value="union"/>
+					<xs:enumeration value="intersect"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="SceneInfoDef">
+		<xs:all>
+			<xs:element name="NorthAngle" type="xs:float" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="LocationDef">
+		<xs:all>
+			<xs:element name="City" type="xs:string" minOccurs="0"/>
+			<xs:element name="Longitude" type="xs:float"/>
+			<xs:element name="Latitude" type="xs:float"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="MeshType">
+		<xs:all>
+			<xs:element name="Position" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Realtive positon of the object in the room or scene</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Rotation" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Realtive rotation of the object / surface in the room or scene</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Scale" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Scale of the object in the room or scene</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+		<xs:attribute name="id"/>
+		<xs:attribute name="name"/>
+		<xs:attribute name="ref_id" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="FreeSurfaceType">
+		<xs:sequence>
+			<xs:element ref="Shape"/>
+			<xs:element ref="MaterialRef" minOccurs="0"/>
+			<xs:element name="FreeSurface" type="FreeSurfaceType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="type">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="room"/>
+					<xs:enumeration value="window"/>
+					<xs:enumeration value="door"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="StoreyInfoType">
+		<xs:all>
+			<xs:element name="Length" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>The length of the storey, corresponds to the max x in a cartesian coordinate system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Width" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>The width of the storey, corresponds to the max y in a cartesian coordinate system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+</xs:schema>
