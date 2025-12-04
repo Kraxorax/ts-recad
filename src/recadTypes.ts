@@ -60,10 +60,7 @@ export class RoomType {
     public $uuid?: any;
 
     public constructor(props?: RoomType) {
-
-
         if (props) {
-
             this.$name = props.$name;
             this.$id = props.$id;
             this.$uuid = props.$uuid;
@@ -576,3 +573,5 @@ export type RecadElementType
     | MeshType
     | FreeSurfaceType
     | StoreyInfoType
+
+

@@ -21,6 +21,7 @@
         "TS_NODE_COMPILER_OPTIONS": "{\"sourceMap\":true,\"inlineSourceMap\":true,\"inlineSources\":true}"
       },
       "sourceMaps": true,
+      "trace": true,
       "skipFiles": ["<node_internals>/**"]
     }
     // {
